@@ -7,7 +7,6 @@ const { sleep, logger } = require('../utils.js');
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36';
 
 if (fs.existsSync(process.env.USER_DATA_DIR)) {
-  logger.info('Chrome user data already exists! \nTo re-login, delete the __chrome directory and run this script again');
   process.exit(0);
 }
 

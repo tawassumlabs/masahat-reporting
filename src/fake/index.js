@@ -1,6 +1,7 @@
 const { faker } = require('@faker-js/faker');
+const fs = require('fs');
 
-async function fakeCreators(count = 50) {
+function fakeCreators(count = 50) {
   function createRow() {
     const row = {
       name: faker.person.fullName(),

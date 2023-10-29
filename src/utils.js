@@ -33,4 +33,4 @@ async function exec(command) {
   });
 };
 
-module.exports = { sleep, logger };
+module.exports = { sleep, logger, exec };

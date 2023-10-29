@@ -1,7 +1,17 @@
 require('dotenv').config();
 const { google } = require('googleapis');
-const { fakeCreators } = require('../fake');
-const { logger, sleep } = require('../utils');
+const { logger } = require('../utils');
+const fs = require('fs');
+
+const SHEERANG = process.argv[2];
+const DATA_PATH = process.argv[3];
+
+if (!SHEERANG || !fs.existsSync(DATA_PATH)) {
+  logger.error('Please provide a sheerang and a data path');
+  process.exit(1);
+}
+
+const values = JSON.parse(fs.readFileSync(DATA_PATH));
 
 /**
  * Google Sheet API Authorization
@@ -22,21 +32,25 @@ async function authorize() {
   return jwtClient;
 }
 
-authorize().then(async (jwtClient) => {
+authorize().then(jwtClient => {
   /**
    * Google Sheet API Usage
    */
-
-  const values = fakeCreators(50); // 8 columns * 50 rows -- columns range from A to H
-  const sheerang = `creators!A1:H50`;
-
-  await google.sheets({ version: 'v4', auth: jwtClient }).spreadsheets.values.update({
+  
+  const params = {
     spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-    range: sheerang,
+    range: SHEERANG,
     valueInputOption: 'RAW',
     resource: { values },
+  }
+
+  google.sheets({ version: 'v4', auth: jwtClient }).spreadsheets.values.update(params, (err, res) => {
+    if (err) {
+      logger.error(err, 'Error while updating Google Sheet');
+      process.exit(1);
+    }
+    
+    logger.info('Sheet updated successfully');
   });
 
-  await sleep(5000); // wait for the sheet to update
-  logger.info('Sheet updated successfully');
 })
