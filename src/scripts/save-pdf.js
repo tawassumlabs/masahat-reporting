@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer-extra');
 const { put } = require('../lib/s3.js');
 const { sleep, logger } = require('../utils.js');
 
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36';
 const FILENAME = process.argv[2] || `${new Date().toISOString()}.pdf`;
 
 puppeteer.use(StealthPlugin());
@@ -33,6 +34,10 @@ puppeteer.launch(options).then(async (browser) => {
 
   const page = await browser.newPage().catch(async (error) => {
     await handleError(error, 'Could not create a new page');
+  })
+
+  await page.setUserAgent(UA).catch(async (error) => {
+    await handleError(error, 'Could not set the user agent');
   })
 
   await page.goto(process.env.LOOKER_STUDIO_URL).catch(async (error) => {
