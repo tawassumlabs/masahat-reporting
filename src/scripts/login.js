@@ -47,20 +47,24 @@ puppeteer.launch(options).then(async (browser) => {
   await page.goto(process.env.LOGIN_URL, { waitUntil: 'networkidle2' }).catch(async (error) => {
     await handleError(error, 'Could not navigate to the login url');
   })
-  await page.type('input[type="email"]', process.env.EMAIL).catch(async (error) => {
+  await page.type('input[type="email"]', process.env.USERNAME).catch(async (error) => {
     await handleError(error, 'Could not type the email');
   })
   await page.keyboard.press('Enter').catch(async (error) => {
     await handleError(error, 'Could not press the enter key');
   })
-  await sleep(2000);
+  await sleep(6000);
   await page.type('input[type="password"]', process.env.PASSWORD).catch(async (error) => {
     await handleError(error, 'Could not type the password');
   })
   await page.keyboard.press('Enter').catch(async (error) => {
     await handleError(error, 'Could not press the enter key');
   })
-  await sleep(2000);
+  await sleep(7000);
+
+  await page.goto(process.env.LOOKER_STUDIO_URL, { waitUntil: 'networkidle2' }).catch(async (error) => {
+    await handleError(error, 'Could not navigate to the looker studio url');
+  })
 
   await browser.close();
   logger.info('Successfully logged in!');

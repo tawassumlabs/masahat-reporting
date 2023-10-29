@@ -59,11 +59,11 @@ puppeteer.launch(options).then(async (browser) => {
 
   await sleep(1000 * 10);
 
-  await page.waitForSelector('[aria-label="More options"]').catch(async (error) => {
+  await page.waitForSelector('[aria-label="More options"][color="primary"]').catch(async (error) => {
     await handleError(error, 'Could not find the more options button');
   })
 
-  await page.click('[aria-label="More options"]').catch(async (error) => {
+  await page.click('[aria-label="More options"][color="primary"]').catch(async (error) => {
     await handleError(error, 'Could not click the more options button');
   })
 
