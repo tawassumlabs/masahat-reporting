@@ -9,7 +9,7 @@ const FILENAME = process.argv[2] || `${new Date().toISOString()}.pdf`;
 puppeteer.use(StealthPlugin());
 
 const options = {
-  headless: false,
+  headless: true,
   args: [
     '--disable-web-security',
     '--disable-features=IsolateOrigins,site-per-process',
