@@ -21,6 +21,12 @@ async function post(req, res) {
 
   const filename = `${new Date().toISOString()}.pdf`;
   
+  jobs.push({
+    id: filename,
+    status: 'pending',
+    results: null,
+  });
+  
   queue.push({ filename, ...req.body });
   
   res.status(200).json({ job: filename });

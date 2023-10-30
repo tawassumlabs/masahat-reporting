@@ -3,19 +3,18 @@ const Queue = require('better-queue');
 const fs = require('fs');
 const { promisify } = require('util');
 const { exec } = require('../utils');
+const { get } = require('http');
+const { getPdf } = require('../scripts/save-pdf');
+const { getPage } = require('../browser');
 
 const writeFileAsync = promisify(fs.writeFile);
 
 const reportQueueStatus = [];
 
 const reportQueue = new Queue(async ({ filename, cells, sheetrange }, cb) => {
-  const status = {
-    id: filename,
-    status: 'processing',
-    results: null,
-  };
+  const status = reportQueueStatus.find((job) => job.id === filename);
 
-  reportQueueStatus.push(status);
+  status.status = 'processing';
 
   const handleErr = (err) => {
     logger.error(`Error processing job ${filename}`, err);
@@ -36,9 +35,15 @@ const reportQueue = new Queue(async ({ filename, cells, sheetrange }, cb) => {
   if (sheet.status === 'rejected') {
     return handleErr(sheet.reason.error);
   }
+  
+  const [page] = await Promise.allSettled([getPage()]);
+
+  if (page.status === 'rejected') {
+    return handleErr(page.reason.error);
+  }
 
   // refresh looker studio and download pdf to s3
-  const [pdf] = await Promise.allSettled([exec(`node src/scripts/login.js && node src/scripts/save-pdf.js ${filename}`)]);
+  const [pdf] = await Promise.allSettled([getPdf(page.value, filename)]);
 
   if (pdf.status === 'rejected') {
     return handleErr(pdf.reason.error);
