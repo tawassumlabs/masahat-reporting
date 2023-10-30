@@ -3,14 +3,13 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const puppeteer = require('puppeteer-extra');
 const { put } = require('../lib/s3.js');
 const { sleep, logger } = require('../utils.js');
-
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36';
 const FILENAME = process.argv[2] || `${new Date().toISOString()}.pdf`;
 
 puppeteer.use(StealthPlugin());
 
 const options = {
-  headless: true,
+  headless: false,
   args: [
     '--disable-web-security',
     '--disable-features=IsolateOrigins,site-per-process',
@@ -39,6 +38,44 @@ puppeteer.launch(options).then(async (browser) => {
   await page.setUserAgent(UA).catch(async (error) => {
     await handleError(error, 'Could not set the user agent');
   })
+
+  /**
+   * Google Login again if needed by clicking on the previously logged in account
+   */
+  await page.goto('https://myaccount.google.com').catch(async (error) => {
+    await handleError(error, 'Could not navigate to the looker studio url');
+  })
+
+  await sleep(5000);
+
+  if (!page.url().startsWith('https://myaccount.google.com')) {
+    await page.goto(process.env.LOGIN_URL).catch(async (error) => {
+      await handleError(error, 'Could not navigate to the login url');
+    })
+
+    await sleep(5000);
+
+    await page.waitForSelector('ul li [role=link]').catch(async (error) => {
+      await handleError(error, 'Could not find the account item');
+    })
+    await page.click('ul li [role=link]').catch(async (error) => {
+      await handleError(error, 'Could not click the account item');
+    })
+    
+    await sleep(6000);
+    
+    await page.type('input[type="password"]', process.env.PASSWORD).catch(async (error) => {
+      await handleError(error, 'Could not type the password');
+    })
+    
+    await page.keyboard.press('Enter').catch(async (error) => {
+      await handleError(error, 'Could not press the enter key');
+    })
+    
+    await sleep(7000);
+  }
+  // end of google re-login flow
+
 
   await page.goto(process.env.LOOKER_STUDIO_URL).catch(async (error) => {
     await handleError(error, 'Could not navigate to the looker studio url');
