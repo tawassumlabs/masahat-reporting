@@ -1,4 +1,17 @@
 # masahat-reporting
 
-*REQUIRED*
-```sudo apt install -y libx11-xcb1 libxcomposite1 libxi6 libxext6 libxtst6 libnss3 libcups2 libxss1 libxrandr2 libasound2 libpangocairo-1.0-0 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0```
+> ⚠️ WARNING - Work in Progress
+>
+> This script use browser to login to google account and that is not 100% reliable, this is still work in progress
+
+### Deployment Steps
+- `cd /home/`
+- `git clone git@github.com:tawassumlabs/masahat-reporting.git`
+- `cd masahat-reporting`
+- add `.env` or contact for .env file
+- `docker build -t masahat-reporting:latest .`
+- `docker run -p 3000:3000 masahat-reporting`
+
+### Notes:
+- testing done on ubuntu 22 (lts)
+- smallest digitalocean droplet can't complete docker build command
