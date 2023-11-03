@@ -31,7 +31,8 @@ COPY --chown=pptruser:pptruser . .
 # Set the environment variables needed for Puppeteer
 ENV DBUS_SESSION_BUS_ADDRESS autolaunch:
 
-# You can include any other ENV variables you need here
+RUN rm -rf ./__chrome/
+RUN rm -rf ./logs/
 
 # The default command to run when starting the container
 CMD ["node", "src/index.js"]
