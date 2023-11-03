@@ -4,5 +4,3 @@ secrets
 __chrome
 temp/
 logs
-.env
-masahat-reporting.tar
