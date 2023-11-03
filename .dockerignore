@@ -1,6 +1,5 @@
 node_modules
 secrets
 .DS_Store
-__chrome
 temp/
 logs
