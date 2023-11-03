@@ -18,6 +18,9 @@ RUN apt-get update \
 USER pptruser
 WORKDIR /home/pptruser
 
+RUN rm -rf ./__chrome/
+RUN rm -rf ./logs/
+
 # Copy the necessary package files
 COPY --chown=pptruser:pptruser package*.json ./
 
@@ -30,9 +33,6 @@ COPY --chown=pptruser:pptruser . .
 
 # Set the environment variables needed for Puppeteer
 ENV DBUS_SESSION_BUS_ADDRESS autolaunch:
-
-RUN rm -rf ./__chrome/
-RUN rm -rf ./logs/
 
 # The default command to run when starting the container
 CMD ["node", "src/index.js"]
